@@ -17,8 +17,8 @@ table *create_table(table *tbl, size_t capacity) {
 	if (tbl) return tbl;
 
 	tbl         = (table *) malloc(sizeof(table));
-	tbl->bucket = (entry **) malloc(sizeof(entry *) * capacity);
-	memset(tbl->bucket, 0, sizeof(entry *) * capacity);
+	tbl->bucket = (table_entry **) malloc(sizeof(table_entry *) * capacity);
+	memset(tbl->bucket, 0, sizeof(table_entry *) * capacity);
 	tbl->capacity = capacity;
 	tbl->size     = 0;
 
@@ -28,7 +28,7 @@ table *create_table(table *tbl, size_t capacity) {
 int table_add_int(table *tbl, char *key, int value) {
 	long hash = hash_str(key) % tbl->capacity;
 
-	entry *en = tbl->bucket[hash];
+	table_entry *en = tbl->bucket[hash];
 
 	while (en != 0) {
 		if (strcmp(en->key, key) == 0) {    // Found the key
@@ -43,7 +43,7 @@ int table_add_int(table *tbl, char *key, int value) {
 	}
 
 	printf("key: %s, hash: %ld\n", key, hash);
-	en      = (entry *) malloc(sizeof(entry));
+	en      = (table_entry *) malloc(sizeof(table_entry));
 	en->key = (char *) malloc(sizeof(char) * strlen(key));
 	strcpy(en->key, key);
 	en->iValue = value;
@@ -58,7 +58,7 @@ int table_add_int(table *tbl, char *key, int value) {
 int table_add_double(table *tbl, char *key, double value) {
 	long hash = hash_str(key) % tbl->capacity;
 
-	entry *en = tbl->bucket[hash];
+	table_entry *en = tbl->bucket[hash];
 
 	while (en != 0) {
 		if (strcmp(en->key, key) == 0) {    // Found the key
@@ -73,7 +73,7 @@ int table_add_double(table *tbl, char *key, double value) {
 	}
 
 	printf("key: %s, hash: %ld\n", key, hash);
-	en      = (entry *) malloc(sizeof(entry));
+	en      = (table_entry *) malloc(sizeof(table_entry));
 	en->key = (char *) malloc(sizeof(char) * strlen(key));
 	strcpy(en->key, key);
 	en->dValue = value;
@@ -88,7 +88,7 @@ int table_add_double(table *tbl, char *key, double value) {
 int table_add_str(table *tbl, char *key, char *value) {
 	long hash = hash_str(key) % tbl->capacity;
 
-	entry *en = tbl->bucket[hash];
+	table_entry *en = tbl->bucket[hash];
 
 	while (en != 0) {
 		if (strcmp(en->key, key) == 0) {    // Found the key
@@ -103,7 +103,7 @@ int table_add_str(table *tbl, char *key, char *value) {
 	}
 
 	printf("key: %s, hash: %ld\n", key, hash);
-	en      = (entry *) malloc(sizeof(entry));
+	en      = (table_entry *) malloc(sizeof(table_entry));
 	en->key = (char *) malloc(sizeof(char) * strlen(key));
 	strcpy(en->key, key);
 	en->sValue = (char *) malloc(sizeof(char) * strlen(value));
@@ -116,10 +116,10 @@ int table_add_str(table *tbl, char *key, char *value) {
 	return 0;
 }
 
-entry *table_get(table *tbl, char *key) {
+table_entry *table_get(table *tbl, char *key) {
 	long hash = hash_str(key) % tbl->capacity;
 
-	entry *en = tbl->bucket[hash];
+	table_entry *en = tbl->bucket[hash];
 
 	while (en != 0) {
 		if (strcmp(en->key, key) == 0) return en;
@@ -132,8 +132,8 @@ entry *table_get(table *tbl, char *key) {
 int table_remove(table *tbl, char *key) {
 	long hash = hash_str(key) % tbl->capacity;
 
-	entry *en   = tbl->bucket[hash];
-	entry *prev = 0;
+	table_entry *en   = tbl->bucket[hash];
+	table_entry *prev = 0;
 	while (en != 0) {
 		if (strcmp(en->key, key) == 0) {
 			if (prev)
